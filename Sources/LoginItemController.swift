@@ -22,7 +22,7 @@ public final class LoginItemController: LoginItemEnabling {
             if enabled {
                 try SMAppService.mainApp.register()
             } else {
-                SMAppService.mainApp.unregister()
+                try SMAppService.mainApp.unregister()
             }
         } catch {
             NSLog("Failed to toggle login item: \(error.localizedDescription)")
