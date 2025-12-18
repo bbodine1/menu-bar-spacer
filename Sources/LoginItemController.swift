@@ -1,0 +1,38 @@
+import Foundation
+
+#if canImport(ServiceManagement)
+import ServiceManagement
+#endif
+
+public protocol LoginItemEnabling {
+    func setEnabled(_ enabled: Bool)
+}
+
+/// Handles login item state for the app.
+public final class LoginItemController: LoginItemEnabling {
+    private let bundleIdentifier: String
+
+    public init(bundleIdentifier: String = Bundle.main.bundleIdentifier ?? "") {
+        self.bundleIdentifier = bundleIdentifier
+    }
+
+    public func setEnabled(_ enabled: Bool) {
+        #if os(macOS)
+        if #available(macOS 13.0, *) {
+            do {
+                if enabled {
+                    try SMAppService.mainApp.register()
+                } else {
+                    SMAppService.mainApp.unregister()
+                }
+            } catch {
+                NSLog("Failed to toggle login item: \(error.localizedDescription)")
+            }
+        } else {
+            #if canImport(ServiceManagement)
+            SMLoginItemSetEnabled(bundleIdentifier as CFString, enabled)
+            #endif
+        }
+        #endif
+    }
+}
