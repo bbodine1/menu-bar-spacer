@@ -70,7 +70,7 @@ struct SpacerManagerView: View {
             Toggle("Launch at login", isOn: $viewModel.launchAtLogin)
         }
         .padding()
-        .onChange(of: viewModel.spacers) { newValue in
+        .onChange(of: viewModel.spacers) { oldValue, newValue in
             onChange(newValue)
         }
     }
@@ -88,3 +88,4 @@ struct SpacerManagerView: View {
     }
 }
 #endif
+

@@ -64,10 +64,13 @@ public final class StatusItemController: ObservableObject {
             let statusItem = statusBar.statusItem(withLength: CGFloat(spacer.width))
             statusItem.length = CGFloat(spacer.width)
             statusItem.isVisible = true
-            let spacerView = SpacerStatusItemView(width: spacer.width)
-            statusItem.button = nil
-            statusItem.view = spacerView
-            spacerView.updateWidth(spacer.width)
+            if let button = statusItem.button {
+                // Use spaces to occupy width; disable interactions so it behaves as a spacer
+                button.title = String(repeating: "\u{00A0}", count: max(1, Int(spacer.width / 3))) // non‑breaking spaces
+                button.isEnabled = false
+                button.target = nil
+                button.action = nil
+            }
             spacerItems[spacer.id] = statusItem
         }
     }
@@ -113,3 +116,4 @@ public final class StatusItemController: ObservableObject {
     }
 }
 #endif
+
