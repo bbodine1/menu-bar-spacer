@@ -3,6 +3,7 @@ import AppKit
 
 final class SpacerStatusItemView: NSView {
     private var widthConstraint: NSLayoutConstraint?
+    var onClick: (() -> Void)?
 
     init(width: CGFloat) {
         super.init(frame: NSRect(x: 0, y: 0, width: width, height: 24))
@@ -20,6 +21,11 @@ final class SpacerStatusItemView: NSView {
 
     func updateWidth(_ width: CGFloat) {
         widthConstraint?.constant = width
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        super.mouseDown(with: event)
+        onClick?()
     }
 }
 #endif

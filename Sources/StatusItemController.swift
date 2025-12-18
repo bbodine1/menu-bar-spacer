@@ -27,6 +27,7 @@ public final class StatusItemController: ObservableObject {
         )
         rebuildSpacerItems(with: spacers)
         createMainStatusItem()
+        updateMainStatusItemVisibility()
     }
 
     // MARK: - Status item creation
@@ -61,16 +62,18 @@ public final class StatusItemController: ObservableObject {
         spacerItems.values.forEach { statusBar.removeStatusItem($0) }
         spacerItems = [:]
         for spacer in spacers.sorted(by: { $0.order < $1.order }) {
+            let spacerID = spacer.id
             let statusItem = statusBar.statusItem(withLength: CGFloat(spacer.width))
             statusItem.length = CGFloat(spacer.width)
             statusItem.isVisible = true
-            if let button = statusItem.button {
-                // Use spaces to occupy width; disable interactions so it behaves as a spacer
-                button.title = String(repeating: "\u{00A0}", count: max(1, Int(spacer.width / 3))) // non‑breaking spaces
-                button.isEnabled = false
-                button.target = nil
-                button.action = nil
+            let spacerView = SpacerStatusItemView(width: spacer.width)
+            spacerView.onClick = { [weak self, weak statusItem] in
+                self?.managerViewModel.selectedSpacerID = spacerID
+                self?.togglePopover(anchor: statusItem?.view)
             }
+            statusItem.button = nil
+            statusItem.view = spacerView
+            spacerView.updateWidth(spacer.width)
             spacerItems[spacer.id] = statusItem
         }
     }
@@ -78,21 +81,24 @@ public final class StatusItemController: ObservableObject {
     // MARK: - Popover
 
     @objc private func togglePopover(_ sender: Any?) {
+        togglePopover(anchor: (sender as? NSView) ?? mainStatusItem?.button)
+    }
+
+    private func togglePopover(anchor: NSView?) {
         if popover?.isShown == true {
-            popover?.performClose(sender)
-            return
+            popover?.performClose(anchor)
         }
+        guard let anchor else { return }
         let popover = NSPopover()
         popover.behavior = .transient
         popover.contentSize = NSSize(width: 320, height: 400)
         let view = SpacerManagerView(viewModel: managerViewModel) { [weak self] spacers in
             self?.rebuildSpacerItems(with: spacers)
             self?.refreshMenuPlaceholder()
+            self?.updateMainStatusItemVisibility()
         }
         popover.contentViewController = NSHostingController(rootView: view)
-        if let button = mainStatusItem?.button {
-            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-        }
+        popover.show(relativeTo: anchor.bounds, of: anchor, preferredEdge: .minY)
         self.popover = popover
     }
 
@@ -102,6 +108,7 @@ public final class StatusItemController: ObservableObject {
         managerViewModel.addSpacer()
         rebuildSpacerItems(with: managerViewModel.spacers)
         refreshMenuPlaceholder()
+        updateMainStatusItemVisibility()
     }
 
     private func refreshMenuPlaceholder() {
@@ -114,6 +121,9 @@ public final class StatusItemController: ObservableObject {
             return menu
         }()
     }
+
+    private func updateMainStatusItemVisibility() {
+        mainStatusItem?.isVisible = managerViewModel.spacers.isEmpty
+    }
 }
 #endif
-
