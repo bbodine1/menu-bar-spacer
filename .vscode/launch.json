@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:menu-bar-spacer}",
+            "name": "Debug MenuBarSpacer",
+            "target": "MenuBarSpacer",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug MenuBarSpacer"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:menu-bar-spacer}",
+            "name": "Release MenuBarSpacer",
+            "target": "MenuBarSpacer",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release MenuBarSpacer"
+        }
+    ]
+}
