@@ -17,6 +17,7 @@ public final class SpacerManagerViewModel: ObservableObject {
         self.spacerStore = spacerStore
         self.loginController = loginController
         self.launchAtLogin = spacerStore.isLaunchAtLoginEnabled()
+        self.selectedSpacerID = self.spacers.first?.id
         bindPersistence()
     }
 
@@ -49,6 +50,15 @@ public final class SpacerManagerViewModel: ObservableObject {
             spacers.remove(at: index)
         }
         resequenceOrders()
+        resetSelection()
+    }
+
+    public func deleteSelectedSpacer() {
+        guard let selectedSpacerID,
+              let index = spacers.firstIndex(where: { $0.id == selectedSpacerID }) else { return }
+        spacers.remove(at: index)
+        resequenceOrders()
+        resetSelection()
     }
 
     public func updateWidth(for spacerID: SpacerItem.ID, width: CGFloat) {
@@ -63,11 +73,20 @@ public final class SpacerManagerViewModel: ObservableObject {
         }
         spacers.insert(contentsOf: moving, at: destination)
         resequenceOrders()
+        resetSelection()
     }
 
     private func resequenceOrders() {
         for (idx, item) in spacers.enumerated() {
             spacers[idx].order = idx
         }
+    }
+
+    private func resetSelection() {
+        if let selectedSpacerID,
+           spacers.contains(where: { $0.id == selectedSpacerID }) {
+            return
+        }
+        selectedSpacerID = spacers.first?.id
     }
 }

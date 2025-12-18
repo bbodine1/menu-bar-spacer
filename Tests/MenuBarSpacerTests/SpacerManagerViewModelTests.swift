@@ -38,6 +38,17 @@ final class SpacerManagerViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.spacers.first?.order, 0)
     }
 
+    func testDeleteSelectedSpacerUpdatesSelection() {
+        let spacerA = SpacerItem(width: 24, order: 0)
+        let spacerB = SpacerItem(width: 30, order: 1)
+        let store = SpacerStore(fileURL: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString), userDefaults: .init(suiteName: UUID().uuidString)!)
+        let viewModel = SpacerManagerViewModel(spacers: [spacerA, spacerB], spacerStore: store, loginController: MockLoginItemController())
+        viewModel.selectedSpacerID = spacerB.id
+        viewModel.deleteSelectedSpacer()
+        XCTAssertEqual(viewModel.spacers.count, 1)
+        XCTAssertEqual(viewModel.selectedSpacerID, spacerA.id)
+    }
+
     func testMoveSpacerUpdatesOrder() {
         let spacerA = SpacerItem(width: 24, order: 0)
         let spacerB = SpacerItem(width: 30, order: 1)

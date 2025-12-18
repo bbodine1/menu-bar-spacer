@@ -62,10 +62,12 @@ public final class StatusItemController: ObservableObject {
         spacerItems = [:]
         for spacer in spacers.sorted(by: { $0.order < $1.order }) {
             let statusItem = statusBar.statusItem(withLength: CGFloat(spacer.width))
+            statusItem.length = CGFloat(spacer.width)
             statusItem.isVisible = true
             let spacerView = SpacerStatusItemView(width: spacer.width)
             statusItem.button = nil
             statusItem.view = spacerView
+            spacerView.updateWidth(spacer.width)
             spacerItems[spacer.id] = statusItem
         }
     }

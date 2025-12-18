@@ -18,20 +18,14 @@ public final class LoginItemController: LoginItemEnabling {
 
     public func setEnabled(_ enabled: Bool) {
         #if os(macOS)
-        if #available(macOS 13.0, *) {
-            do {
-                if enabled {
-                    try SMAppService.mainApp.register()
-                } else {
-                    SMAppService.mainApp.unregister()
-                }
-            } catch {
-                NSLog("Failed to toggle login item: \(error.localizedDescription)")
+        do {
+            if enabled {
+                try SMAppService.mainApp.register()
+            } else {
+                SMAppService.mainApp.unregister()
             }
-        } else {
-            #if canImport(ServiceManagement)
-            SMLoginItemSetEnabled(bundleIdentifier as CFString, enabled)
-            #endif
+        } catch {
+            NSLog("Failed to toggle login item: \(error.localizedDescription)")
         }
         #endif
     }

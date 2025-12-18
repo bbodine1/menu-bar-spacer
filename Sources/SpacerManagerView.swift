@@ -29,21 +29,16 @@ struct SpacerManagerView: View {
             HStack {
                 Text("Menu Bar Spacers").font(.headline)
                 Spacer()
+                Button(role: .destructive, action: deleteSelected) {
+                    Label("Delete", systemImage: "trash")
+                }
+                .disabled(viewModel.selectedSpacerID == nil)
                 Button(action: viewModel.addSpacer) {
                     Label("Add", systemImage: "plus")
                 }.help("Create a new spacer")
             }
             if viewModel.spacers.isEmpty {
-                if #available(macOS 13.0, *) {
-                    ContentUnavailableView("No spacers", systemImage: "rectangle.dashed", description: Text("Add a spacer to begin"))
-                } else {
-                    VStack(spacing: 8) {
-                        Image(systemName: "rectangle.dashed")
-                        Text("No spacers").font(.headline)
-                        Text("Add a spacer to begin").foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
-                }
+                ContentUnavailableView("No spacers", systemImage: "rectangle.dashed", description: Text("Add a spacer to begin"))
             } else {
                 List(selection: $viewModel.selectedSpacerID) {
                     ForEach(viewModel.spacers) { spacer in
@@ -86,6 +81,10 @@ struct SpacerManagerView: View {
 
     private func moveSpacer(from source: IndexSet, to destination: Int) {
         viewModel.moveSpacer(from: source, to: destination)
+    }
+
+    private func deleteSelected() {
+        viewModel.deleteSelectedSpacer()
     }
 }
 #endif
