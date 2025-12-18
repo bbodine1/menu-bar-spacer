@@ -71,6 +71,7 @@ public final class StatusItemController: ObservableObject {
                 self?.managerViewModel.selectedSpacerID = spacerID
                 self?.togglePopover(anchor: statusItem?.view)
             }
+            statusItem.button = nil
             statusItem.view = spacerView
             spacerView.updateWidth(spacer.width)
             spacerItems[spacer.id] = statusItem
@@ -84,8 +85,10 @@ public final class StatusItemController: ObservableObject {
     }
 
     private func togglePopover(anchor: NSView?) {
-        if popover?.isShown == true {
-            popover?.performClose(anchor)
+        if let popover, popover.isShown {
+            popover.performClose(anchor)
+            self.popover = nil
+            return
         }
         guard let anchor else { return }
         let popover = NSPopover()
@@ -126,4 +129,3 @@ public final class StatusItemController: ObservableObject {
     }
 }
 #endif
-

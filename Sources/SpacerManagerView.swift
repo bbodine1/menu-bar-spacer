@@ -61,7 +61,7 @@ struct SpacerManagerView: View {
                             viewModel.updateWidth(for: spacer.id, width: width)
                             onChange(viewModel.spacers)
                         }
-                    ), in: 12...200, step: 1)
+                    ), in: 12...1200, step: 1)
                 }
             } else {
                 Text("Select a spacer to edit").foregroundStyle(.secondary)
